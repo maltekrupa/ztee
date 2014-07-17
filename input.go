@@ -59,8 +59,16 @@ func MakeLineSplitter(extract Extractor) func(lineChan chan string, ipChan chan 
             // Push the line to the output file rewriter
             rewriteChan <- line
             // Grab the IP from the line, send it to stdout writer
-            if ip, err := extract(line); err == nil {
-                ipChan <- ip
+            if (config.SuccessOnly) {
+                if (strings.Contains(line, "synack")) {
+                    if ip, err := extract(line); err == nil {
+                        ipChan <- ip
+                    }
+                }
+            } else {
+                if ip, err := extract(line); err == nil {
+                    ipChan <- ip
+                }
             }
         }
         close(ipChan)
