@@ -59,17 +59,17 @@ func MakeLineSplitter(extract Extractor) func(lineChan chan string, ipChan chan 
             // Push the line to the output file rewriter
             rewriteChan <- line
             // Grab the IP from the line, send it to stdout writer
-            if (config.SuccessOnly) {
-                splitString := strings.Split(line, ",")
-                if (splitString[12] == "1") {
-                    if ip, err := extract(line); err == nil {
-                        ipChan <- ip
-                    }
-                }
-            } else {
-                if ip, err := extract(line); err == nil {
-                    ipChan <- ip
-                }
+            splitString := strings.Split(line, ",")
+            if ((config.SuccessOnly) && (splitString[12] == "0")) {
+                continue
+            }
+
+            if ((config.NoRepeats) && (splitString[13] == "1")) {
+                continue
+            }
+
+            if ip, err := extract(line); err == nil {
+                ipChan <- ip
             }
         }
         close(ipChan)

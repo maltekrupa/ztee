@@ -23,6 +23,7 @@ type RawArgs struct {
 	Field string
 	Column int
 	SuccessOnly    bool
+	NoRepeats      bool
 }
 
 // Container for options with useful types
@@ -32,6 +33,7 @@ type Config struct  {
 	CsvIndex int
 	JsonField string
 	SuccessOnly bool
+	NoRepeats bool
 }
 
 var args RawArgs
@@ -44,6 +46,7 @@ func init() {
 	flag.IntVar(&args.Column, "column", 1, "Column number in csv")
 	flag.StringVar(&args.Field, "field", "saddr", "Field name in json")
 	flag.BoolVar(&args.SuccessOnly, "success-only", false, "Only pass successful ZMap results to stdout")
+	flag.BoolVar(&args.NoRepeats, "no-repeats", false, "Only pass non-repeated ZMap results to stdout")
 	flag.Parse()
 
 	// Parse the input args and convert to usable types
@@ -76,6 +79,7 @@ func init() {
 	config.CsvIndex = args.Column - 1
 	config.JsonField = args.Field
 	config.SuccessOnly = args.SuccessOnly
+	config.NoRepeats = args.NoRepeats
 }
 
 func GetExtractor() Extractor {
